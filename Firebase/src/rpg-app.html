@@ -1,0 +1,314 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html">
+<link rel="import" href="../bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<link rel="import" href="../bower_components/paper-behaviors/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-behaviors/paper-dropdown-menu-icons.html">
+<link rel="import" href="../bower_components/paper-behaviors/paper-dropdown-menu-light.html">
+<link rel="import" href="../bower_components/paper-behaviors/paper-dropdown-menu-shared-styles.html">
+
+
+
+
+
+<link rel="import" href="rpg-detail.html">
+<link rel="import" href="rpg-list.html">
+<link rel="import" href="app-icons.html">
+<link rel="import" href="rpg-profesiones.html">
+<link rel="import" href="rpg-habilidades.html">
+<link rel="import" href="rpg-caracteristicas.html">
+<link rel="import" href="rpg-alta.html">
+
+
+<dom-module id="rpg-app">
+
+  <template>
+
+    <style>
+    .avatar-container {
+      position: relative;
+      border: 2px solid black;
+      border-radius: 50%;
+      height: 90px;
+      padding: 2px;
+      width: 90px;
+      margin: 20px auto;
+      
+      
+    }
+
+    .avatar-container .image {
+      background-size: cover;
+      border-radius: 80%;
+      height: 100%;
+      width: 100%;
+     
+    }
+
+    .contact-info {
+      margin: 0 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #CCC;
+      text-align: center;
+    }
+
+    .contact-info .name {
+      font-weight: bold;
+    }
+
+    .contact-info .email {
+      color: #999;
+    }
+
+    paper-item {
+      @apply(--layout-center-center);
+      height: 54px;
+      
+    }
+
+    paper-icon-button {
+      --paper-icon-button-ink-color: white;
+    }
+    </style>
+
+    <firebase-app auth-domain="rpg-uah.firebaseapp.com"
+      database-url="https://rpg-uah.firebaseio.com"
+        api-key="AIzaSyBUOotcOGje3Gf0WhFwFlzxBUabo1wPRbQ">
+    </firebase-app>
+    <firebase-auth id="auth" user="{{user}}" provider="google" on-error="handleError">
+    </firebase-auth>
+
+
+
+
+
+    <iron-pages  selected="[[_userlogin]]" attr-for-selected="name" fallback-selection="login">
+      <div style="margin-left: 36%"  name="login">
+        <h1> <strong>Usuario no logeado</strong>
+        </h1>
+
+        <paper-button style="margin-left:11%;" raised on-tap="_loginprocess"> Login</paper-button>
+
+      </div>
+
+
+
+    <app-location route="{{_route}}" use-hash-as-path></app-location>
+    <app-route
+        route="{{_route}}"
+        pattern="/:page"
+        data="{{_pageData}}"
+        tail="{{_subRoute}}"></app-route>
+    <app-route
+        route="{{_subRoute}}"
+        pattern="/:id"
+        data="{{_idData}}"></app-route>
+
+    <app-drawer-layout responsive-width="1280px" name="success">
+
+      <!-- nav panel -->
+      <app-drawer   id="drawer" swipe-open>
+        <app-header-layout has-scrolling-region >
+
+          <app-header fixed>
+      
+            <div  class="avatar-container">
+              <div class="image"></div>
+            </div>
+            <div class="contact-info">
+              <div class="name">[[user.displayName]]</div>
+              <div class="email">[[user.email]]</div>
+              <div class="email"> <paper-button raised on-tap="_logout">Log out </paper-button> </div>
+            </div>
+          </app-header>
+
+          <!-- nav menu -->
+          <paper-listbox
+              selected="{{_pageData.page}}"
+              attr-for-selected="name"
+              on-iron-activate="_drawerSelected">
+              <paper-item name="profession">Professions </paper-item>
+              <paper-item name="habilities">Habilities</paper-item>
+              <paper-item name="characteristics">Characteristics </paper-item>
+              <paper-item name="home">Create Character</paper-item>
+              <paper-item name="characters">Characters</paper-item>
+
+
+          </paper-listbox>
+
+        </app-header-layout>
+      </app-drawer>
+
+      <app-scrollpos-control
+          selected="[[_pageData.page]]"
+          reset="[[_isDetailPage(_pageData.page)]]"></app-scrollpos-control>
+
+      <!-- list/detail pages -->
+      <iron-pages selected="[[_pageData.page]]" attr-for-selected="name">
+
+         <rpg-list  id="yo"name="characters" jugador="[[jugador]]">
+          <paper-icon-button icon="app:menu" drawer-toggle></paper-icon-button>
+        </rpg-list>
+
+        <rpg-alta  name="home" >
+          <paper-icon-button icon="app:menu" drawer-toggle></paper-icon-button>
+        </rpg-alta>
+
+        <rpg-profesiones name="profession">
+          <paper-icon-button icon="app:menu" drawer-toggle></paper-icon-button>
+        </rpg-profesiones>
+
+        <rpg-caracteristicas name="characteristics">
+          <paper-icon-button icon="app:menu" drawer-toggle></paper-icon-button>
+        </rpg-caracteristicas>
+
+        <rpg-habilidades name="habilities">
+          <paper-icon-button icon="app:menu" drawer-toggle></paper-icon-button>
+        </rpg-habilidades>
+          <rpg-asalto name="asalto">
+
+          </rpg-asalto>
+          <rpg-soporte name="support">
+          <paper-icon-button icon="app:menu" drawer-toggle></paper-icon-button>
+        </rpg-soporte>
+        <rpg-recon name="recon">
+          <paper-icon-button icon="app:menu" drawer-toggle></paper-icon-button>
+        </rpg-recon>
+
+        <rpg-detail
+            id="detailView"
+            name="detail"
+            jugadorid="[[_idData.id]]"></rpg-detail>
+
+      </iron-pages>
+    </app-drawer-layout>
+
+  </template>
+
+  <script>
+
+  Polymer({
+
+    is: 'rpg-app',
+
+    properties: {
+
+      jugador: Object,
+
+      _route: Object,
+
+      _subRoute: Object,
+
+      _pageData: Object,
+
+      _idData: Object,
+
+      user :Object,
+
+      _userlogin:{
+        type: String,
+        computed: '_login(user)'
+
+
+      }
+
+
+    },
+
+    attached: function() {
+      this.async(function() {
+        if (!this._route.path) {
+          this.set('_route.path', '/home');
+        }
+      });
+    },
+
+    _isDetailPage: function(page) {
+      return page === 'detail';
+    },
+
+    _getRecipe: function() {
+      if (this.recipes && this._idData.id) {
+        for (var i = 0; i < this.recipes.length; ++i) {
+          var r = this.recipes[i];
+          if (r.id === this._idData.id) {
+            return r;
+          }
+        }
+      }
+      return null;
+    },
+
+    _drawerSelected: function() {
+      if (!this.$.drawer.persistent) this.$.drawer.close();
+    },
+
+    _loginprocess:function () {
+      return this.$.auth.signInWithPopup();
+
+    },
+    
+    _login:function (user) {
+      if(this.$.auth.user ===undefined ||this.$.auth.user=== null){
+        return "login"
+      }else{
+
+       //writeUserData(this.$.auth.user.uid,this.$.auth.user.displayName,this.$.auth.user.email);
+        $('div.avatar-container').children().css('background-image', 'url("' + this.$.auth.user.photoURL + '")');
+
+        return "success"
+
+      }
+
+
+
+
+
+
+    },
+    
+    _logout:function () {
+      console.log(this.user);
+      return this.$.auth.signOut();
+      
+    },
+
+
+
+
+
+  });
+
+
+
+  </script>
+
+</dom-module>

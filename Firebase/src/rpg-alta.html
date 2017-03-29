@@ -1,0 +1,382 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/polymerfire/polymerfire.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+
+<link rel="import" href="../bower_components/iron-behaviors/iron-button-state.html">
+<link rel="import" href="../bower_components/paper-input/paper-input-addon-behavior.html">
+<link rel="import" href="../bower_components/paper-input/paper-input-behavior.html">
+<link rel="import" href="../bower_components/paper-input/paper-input-char-counter.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/iron-checked-element-behavior/iron-checked-element-behavior.html">
+<link rel="import" href="../bower_components/iron-form-element-behavior/iron-form-element-behavior.html">
+<link rel="import" href="../bower_components/paper-menu/paper-menu.html">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+
+
+
+<script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+<dom-module id="rpg-alta">
+  <template>
+
+    <style>
+
+    app-header {
+      color: #fff;
+      background-image: url('miitary.jpg');
+    }
+
+    app-toolbar {
+      height: 50px;
+    }
+
+    [condensed-title] {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-image: url('');
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: 90px;
+
+      /* The difference in font size is used to calculate the scale of the title in the transition. */
+      font-size: 16px;
+    }
+
+    [main-title] {
+      position: absolute;
+      top: -120px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-image: url('');
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: 240px;
+      -webkit-transform-origin: center top !important;
+      transform-origin: center top !important;
+
+      /* The difference in font size is used to calculate the scale of the title in the transition. */
+      font-size: 32px;
+    }
+
+    .content {
+      display: block;
+      position: relative;
+      max-width: 1000px;
+      margin: 5px auto;
+    }
+
+    paper-card {
+      display: block;
+      margin: 5px;
+
+      --paper-card-header-image: {
+        height:100%;
+      }
+    }
+
+    paper-card h2 {
+      color :black;
+      font-weight:400;
+      font-size: 80%;
+
+    }
+
+    paper-card p {
+      margin: 4px;
+      color: #999;
+    }
+    .collapse-content {
+    padding: 15px;
+    border: 1px solid #dedede;
+  }
+
+    paper-fab {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+
+      --paper-fab-background: #EF5458;
+      --paper-fab-keyboard-focus-background: #DF4448;
+    }
+
+    @media (max-width: 960px) {
+      .content {
+        max-width: 800px;
+      }
+
+      .card-container {
+        width: 50%;
+      }
+    }
+
+
+    @media (max-width: 719px) {
+      app-toolbar {
+        height: 60px;
+      }
+
+      [condensed-title] {
+        background-image: url('');
+        background-size: 60px;
+      }
+
+      [main-title] {
+        top: -60px;
+        background-image: url('');
+        background-size: 90px;
+      }
+
+      .content {
+        max-width: 400px;
+      }
+
+      .card-container {
+      position: relative;
+      width: 75%;
+      margin: 12% 35% 35% 10%;
+    }
+
+    }
+
+    .camo {
+        position: relative;
+
+    }
+
+    </style>
+
+    <!-- main panel -->
+    <app-header-layout>
+
+      <app-header effects="resize-title" condenses fixed shadow>
+        <app-toolbar class="top-toolbar">
+          <content select="[drawer-toggle]"></content>
+          <div condensed-title></div>
+        </app-toolbar>
+        <app-toolbar class="bottom-toolbar">
+          <div main-title></div>
+        </app-toolbar>
+      </app-header>
+
+        <firebase-auth id="auth2" user="{{user}}"></firebase-auth>
+
+        <div class="card-container ">
+            <paper-card heading="Create Character">
+
+                <form class="col-md-offset-8 col-md-8" is="iron-form"  id="basic">
+                  <paper-input id="nombre" label="Name" required></paper-input>
+                  <br>
+                    <paper-input id="edad"label="Age" required></paper-input>
+                  <br>
+                    <paper-input id="altura" label="Height" required></paper-input>
+                  <br>
+                  <paper-dropdown-menu id="profesion" class="dropdown"label="Profession">
+                  <paper-listbox class="dropdown-content" selected={{mySelection}} on-iron-select="_itemSelected">
+                    <paper-item>Assault</paper-item>
+                    <paper-item>Support</paper-item>
+                    <paper-item>Recon</paper-item>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+
+                    <paper-dropdown-menu id="weapon" label="Weapon">
+                  <paper-listbox  class="dropdown-content" >
+                    <paper-item id="numero" >M16A4</paper-item>
+                    <paper-item id="numero1">M416</paper-item>
+                    <paper-item id="numero2">AK12</paper-item>
+                    <paper-item id="numero3" >AEK-971</paper-item>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+
+                    <paper-dropdown-menu  id="genero"label="Genre">
+                  <paper-listbox  class="dropdown-content">
+                    <paper-item  >Masculine</paper-item>
+                    <paper-item >Feminine</paper-item>
+                    <paper-item >Undefined</paper-item>
+                  </paper-listbox>
+                  </paper-dropdown-menu>
+
+
+
+                    <br>
+
+                    <paper-dropdown-menu id="color"label="Color Skin">
+                  <paper-listbox  class="dropdown-content" >
+                    <paper-item style="background-color:#FFDCB1; color: grey  ">White</paper-item>
+                    <paper-item style="background-color:#E0B184;color: grey  ">Light</paper-item>
+                    <paper-item style="background-color:#BD977B; color: grey  ">Dark Light</paper-item>
+                    <paper-item style="background-color:black; color: grey ">Dark </paper-item>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+
+                    <paper-dropdown-menu id="camuflage" class="dropdown"label="Camouflage">
+                  <paper-listbox class="dropdown-content" >
+                    <paper-item style="background-image: url('woodland.png');color: grey;">Woodland</paper-item>
+                    <paper-item style="background-image: url('desert.png');color: grey;">Desert</paper-item>
+                    <paper-item class="camo" style="background-image: url('urbancamo.jpg');color: grey;">Urban</paper-item>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+
+
+
+
+
+                    <br>
+                    <br>
+                  <paper-button raised  onclick="_test(event)" on-click="_submit">Submit</paper-button>
+                  <paper-button raised onclick="_reset(event)">Reset</paper-button>
+                    <br>
+                    <br>
+                    <br>
+                </form>
+            </paper-card>
+
+        </div>
+
+
+
+    </app-header-layout>
+
+    <paper-fab icon="app:create"></paper-fab>
+  </template>
+
+
+
+  <script>
+
+  Polymer({
+
+    is: 'rpg-alta',
+
+    properties: {
+      jugador: Object,
+      weapons:String,
+      profesion:String,
+      genero: String,
+      color :String,
+
+
+    },
+    toggle: function() {
+  this.$.prueba.toggle();
+},
+_submit: function(){
+    var edad = this.$.edad.value;
+    var altura = this.$.altura.value;
+    var profesion= this.$.profesion.value;
+    var genero = this.$.genero.value;
+    var color = this.$.color.value
+    var weapon = this.$.weapon.value
+    var camuflage = this.$.camuflage.value
+    if(valid(altura) && valid(edad) ){
+        if (profesion===""|| genero===""|| color===""||weapon===""||camuflage==="" ) {
+            alert("Fill all the fields: profesion, genero, color, weapon, camuflage   ");
+        }else{
+            writeUserData(this.$.auth2.user.uid, this.$.nombre.value, profesion, edad, altura, genero, color, weapon, camuflage);
+            alert("Your character was succesfully created " +this.$.nombre.value);
+            window.location.replace("#/characters");
+        }
+    }else{alert("The Age and Height has to be a valid number");
+
+    }
+
+
+      },
+_itemSelected : function(e) {
+    var selectedItem = e.target.selectedItem;
+    if (selectedItem.innerText==='Support') {
+        this.$.numero.innerText='M27 IAR';
+        this.$.numero1.innerText='RPK-74M'
+        this.$.numero2.innerText='M249'
+        this.$.numero3.innerText='M60'
+        weapons=selectedItem.innerText;
+    }else{
+        if (selectedItem.innerText=='Assault'){
+            this.$.numero.innerText='M16A4';
+            this.$.numero1.innerText='M416'
+            this.$.numero2.innerText='AK-12'
+            this.$.numero3.innerText='AEK-971'
+        }else{
+            this.$.numero.innerText='M98';
+            this.$.numero1.innerText='L96'
+            this.$.numero2.innerText='M405'
+            this.$.numero3.innerText='M417'
+        }
+    }
+  },
+
+
+  });
+
+
+  function _reset(event) {
+    var form = Polymer.dom(event).localTarget.parentElement
+    form.reset();
+  }
+  function _test(event) {
+    Polymer.dom(event).localTarget.parentElement.submit();
+  }
+
+  function writeUserData(userId,name,profesion, edad,altura,genero,color,weapon,camuflage) {
+    var myRef = firebase.database().ref().push();
+    var key = myRef.key;
+    var url='';
+    if(profesion==='Support')
+        url:'support.jpg'
+    if(profesion==='Recon')
+        url:'recon.jpg'
+    if(profesion==='Assault')
+        url:'assult.jpg'
+
+    firebase.database().ref('users/' + userId+'/jugador').push({
+    username: name,
+    profession: profesion,
+    caracterisiticas: [{edad:edad ,altura:altura,genero:genero,color:color,weapon:weapon,camuflage:camuflage}],
+    habilidades:["Marathon | Marathon Pro","Sleight of Hand | Sleight of Hand Pro",
+    "Scavenger | Scavenger Pro","Bling | Bling Pro","One Man Army | One Man Army Pro","Stopping Power | Stopping Power Pro",
+    "Lightweight | Lightweight Pro","Hardline | Hardline Pro","Cold-Blooded | Cold-Blooded Pro","Danger Close | Danger Close Pro",
+    "Commando | Commando Pro","Steady Aim | Steady Aim Pro","Scrambler | Scrambler Pro","Ninja | Ninja Pro",
+    "SitRep | SitRep Pro","Last Stand | Last Stand Pro"],
+    url:url
+  });
+
+
+
+}
+function valid(str) {
+    return str.match(/^\d+$/);
+
+}
+
+
+
+
+  </script>
+</dom-module>
